@@ -1,5 +1,5 @@
 import vtk
-
+import sys
 class CubeObject:
     def __init__(self,pos,textura,medidas,rotaciones):
         self.pos=pos
@@ -250,7 +250,8 @@ esfera=SphereObject([0,12,0],1,[0,0,0],5,10,texturas[3])
 esfera.actor=esfera.crearPelota()
 time=0
 coef = 0.1
-velocidadBola=[30,20]
+#30 x 20 z
+velocidadBola=[int(sys.argv[1]),int(sys.argv[2])]
 esfera.velocidad[0]=velocidadBola[0]
 esfera.velocidad[2]=velocidadBola[1]
 camara= crear_camara([110,50,0])
