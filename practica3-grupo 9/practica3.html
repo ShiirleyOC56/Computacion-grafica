@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r79/three.min.js"></script> -->
+    <!-- <script src="https://threejs.org/examples/js/loaders/FBXLoader.js"></script> -->
+    <!--<script src="three.min.js"> </script> 
+    <script src="OrbitControls.js"> </script> 
+    <script src="dat.gui.min.js"></script>
+    -->
+    <script type='module'>     
+        import * as THREE from './jsm/three.module.js';
+        // import * as FB from './jsm/three.fbx.js';
+        import { GUI } from './jsm/dat.gui.module.js';
+        import {OrbitControls} from './jsm/OrbitControls.js';
+        import {OBJLoader} from './jsm/OBJLoader.js';
+        import {STLLoader} from './jsm/STLLoader.js';
+        import {MTLLoader} from './jsm/MTLLoader.js';
+        import {FBXLoader} from './jsm/fbxLoader.js';
+
+        // utilizado cuando queremos poner la lampara dentro de la scene como un mesh
+        function makeXYZGUI(gui, vector3, name, onChangeFn) {
+            const folder = gui.addFolder(name);
+            folder.add(vector3, 'x', -20, 20).onChange(onChangeFn);
+            folder.add(vector3, 'y', 0, 20).onChange(onChangeFn);
+            folder.add(vector3, 'z', -20, 20).onChange(onChangeFn);
+            folder.open();
+        }      
+
+        // utilizado por GUI para modificar los parametros de light en la scena
+        class ColorGUIHelper {
+            constructor(object, prop) {
+                this.object = object;
+                this.prop = prop;
+            }
+            get value() {
+                return `#${this.object[this.prop].getHexString()}`;
+            }
+            set value(hexString) {
+                this.object[this.prop].set(hexString);
+            }
+        }
+
+        // camera //////////////////////////////////////////////////
+        var aspect = window.innerWidth/window.innerHeight;
+        var camera = new THREE.PerspectiveCamera(75, aspect);
+        camera.position.set(0, 10, 20);
+        
+        // scene //////////////////////////////////////////////////
+        var scene = new THREE.Scene();
+        scene.backgroundColor = new THREE.Color(0xffffff);
+               
+        // mesh //////////////////////////////////////////////////    
+        ////////////////////////////////////////////////////////////   
+        // const cube_size = 1;      
+        // var geometry_cube = new THREE.BoxGeometry(cube_size, cube_size, cube_size);
+        // const texture_1 = new THREE.TextureLoader().load( 'textures/texture_1.jpg' );
+        // var material_1 = new THREE.MeshPhongMaterial( {map: texture_1 } );
+        // var cube = new THREE.Mesh( geometry_cube, material_1 );
+        // cube.position.set(0, cube_size / 2, 0);
+        // cube.castShadow = true;
+        // scene.add(cube); 
+
+        const geometry_plane = new THREE.PlaneGeometry( 100, 100, 100 );
+        const texture_2 = new THREE.TextureLoader().load( 'textures/texture_2.jpg' );
+        const material_3 = new THREE.MeshPhongMaterial( {map: texture_2} );
+        const plane = new THREE.Mesh( geometry_plane, material_3 );
+        plane.rotation.x = Math.PI * -.5;
+        plane.receiveShadow = true;
+        scene.add( plane );
+        ////////////////////////////////////////////////////////////
+        ////////////////////////////////////////////////////////////
+       
+
+        // objloader////////////////////////////////////////////////    
+        //////////////////////////////////////////////////////////// 
+        /*var loader =  new OBJLoader();
+        loader.load(
+            'models/poliedro.obj',
+            function(object){
+                object.position.set(5, -7, -10);                
+                scene.add(object);
+            }
+        )*/
+
+        // materioal loader and obj loader
+        var tree1 = new STLLoader();
+			// Binary files - STL Import
+        tree1.load( 'models/treefix.stl', function ( geometry ) {
+            var texture =new THREE.TextureLoader().load('textures/LowPoly_Shield_Shield_SHD_Roughness.tga.png');
+            var material = new THREE.MeshLambertMaterial( {map: texture});
+            var mesh = new THREE.Mesh( geometry, material );
+            
+            mesh.scale.set( 0.02, 0.02, 0.02 );
+            mesh.position.set( 10, -2, -30 );
+            mesh.rotation.x = -Math.PI/2;
+            scene.add( mesh );
+        } );
+
+        var tree2= new STLLoader();
+        tree2.load( 'models/treefix.stl', function ( geometry ) {
+            var texture =new THREE.TextureLoader().load('textures/LowPoly_Shield_Shield_SHD_Roughness.tga.png');
+            var material = new THREE.MeshLambertMaterial( {map: texture});
+            var mesh = new THREE.Mesh( geometry, material );
+            
+            mesh.scale.set( 0.02, 0.02, 0.02);
+            mesh.position.set( -15, -2, 20 );
+            mesh.rotation.x = -Math.PI/2;
+            scene.add( mesh );
+        } );
+
+        var tree3= new STLLoader();
+        tree3.load( 'models/treefix.stl', function ( geometry ) {
+            var texture =new THREE.TextureLoader().load('textures/LowPoly_Shield_Shield_SHD_Roughness.tga.png');
+            var material = new THREE.MeshLambertMaterial( {map: texture});
+            var mesh = new THREE.Mesh( geometry, material );
+            
+            mesh.scale.set( 0.02, 0.02, 0.02);
+            mesh.position.set( 6, -2, 30 );
+            mesh.rotation.x = -Math.PI/2;
+            scene.add( mesh );
+        } );
+
+        var tree4= new STLLoader();
+        tree4.load( 'models/treefix.stl', function ( geometry ) {
+            var texture =new THREE.TextureLoader().load('textures/LowPoly_Shield_Shield_SHD_Roughness.tga.png');
+            var material = new THREE.MeshLambertMaterial( {map: texture});
+            var mesh = new THREE.Mesh( geometry, material );
+            
+            mesh.scale.set( 0.02, 0.02, 0.02);
+            mesh.position.set( -20, -2, -10 );
+            mesh.rotation.x = -Math.PI/2;
+            scene.add( mesh );
+        } );
+
+        var tree5= new STLLoader();
+        tree5.load( 'models/treefix.stl', function ( geometry ) {
+            var texture =new THREE.TextureLoader().load('textures/LowPoly_Shield_Shield_SHD_Roughness.tga.png');
+            var material = new THREE.MeshLambertMaterial( {map: texture});
+            var mesh = new THREE.Mesh( geometry, material );
+            
+            mesh.scale.set( 0.02, 0.02, 0.02);
+            mesh.position.set( 30, -2, -20 );
+            mesh.rotation.x = -Math.PI/2;
+            scene.add( mesh );
+        } );
+
+        var tree6= new STLLoader();
+        tree6.load( 'models/treefix.stl', function ( geometry ) {
+            var texture =new THREE.TextureLoader().load('textures/LowPoly_Shield_Shield_SHD_Roughness.tga.png');
+            var material = new THREE.MeshLambertMaterial( {map: texture});
+            var mesh = new THREE.Mesh( geometry, material );
+            
+            mesh.scale.set( 0.02, 0.02, 0.02);
+            mesh.position.set( 30, -2, 30 );
+            mesh.rotation.x = -Math.PI/2;
+            scene.add( mesh );
+        } );
+
+
+        var loader5= new FBXLoader();
+        loader5.load( 'models/house.fbx', function ( object ) {
+            // model = object;
+
+            // var texture =new THREE.TextureLoader().load('textures/texture_1.jpg');
+            // var material = new THREE.MeshLambertMaterial( {map: texture});
+            // var mesh = new THREE.Mesh( geometry, material );
+            
+            // mesh.scale.set( 0.8, 0.8, 0.8);
+            // mesh.position.set( 0, 0, 0 );
+            // mesh.rotation.x = -Math.PI/2;
+            object.position.set(-15,-2.3,0);
+            object.scale.set(0.01,0.01,0.01);
+            scene.add( object );
+            // model.position.set(0,0,0);
+            // model.scale.set(0.6,0.6,0.6);
+        } );
+        // var mtlLoader = new MTLLoader();
+        // mtlLoader.load( 'models/poliedro.mtl', function( materials ) {
+        //     materials.preload();
+        //     var objLoader = new OBJLoader();
+        //     objLoader.setMaterials( materials );
+        //     objLoader.load( 'models/poliedro.obj', function ( object ) {
+        //         object.position.set(5, -7, -10);   
+        //         scene.add( object );
+        //     });
+        // });
+        // var loader2 = new THREE.FBXLoader();
+		// 	// Binary files - STL Import
+        // loader2.load( 'models/AH_POSE.fbx', function ( object ) {            
+        //     // mesh.scale.set( 0.1, 0.1, 0.1 );
+        //     // mesh.position.set( 0, cube_size + 2, 0 );
+        //     // mesh.rotation.x = -Math.PI/2;
+        //     scene.add( object );
+        // } );
+        // STLloader
+        // var loader2 = new STLLoader();
+		// 	// Binary files - STL Import
+        // loader2.load( 'models/dragon.stl', function ( geometry ) {
+        //     var material = new THREE.MeshLambertMaterial( { color: 0x00FF00 } );
+        //     var mesh = new THREE.Mesh( geometry, material );
+            
+        //     mesh.scale.set( 0.1, 0.1, 0.1 );
+        //     mesh.position.set( 0, cube_size, 0 );
+        //     mesh.rotation.x = -Math.PI/2;
+        //     scene.add( mesh );
+        // } );
+        ////////////////////////////////////////////////////////////
+        ////////////////////////////////////////////////////////////
+
+        ////////////////////////////////////////////////////////////
+        // HemisphereLight light ///////////////////////////////////
+        const skyColor = 0xB1E1FF;  // light blue
+        const groundColor = 0x59340B;  // black
+        const hemisphere_light = new THREE.HemisphereLight(skyColor, groundColor, 0.5);
+        scene.add(hemisphere_light);        
+        ////////////////////////////////////////////////////////////
+        ////////////////////////////////////////////////////////////
+
+        ////////////////////////////////////////////////////////////
+        // DirectionalLight  ///////////////////////////////////////
+        const color = 0xFFFFFF;
+        const intensity = 0.5;
+        const light = new THREE.DirectionalLight(color, intensity);
+        light.position.set(5, 10, 10);
+        light.target.position.set(0, 0, 0);
+        scene.add(light);
+        scene.add(light.target);
+
+        const helper = new THREE.DirectionalLightHelper(light);
+        scene.add(helper);
+
+        function updateLight() {
+            light.target.updateMatrixWorld();
+            helper.update();
+        }
+        updateLight();        
+        // gui
+        const gui = new GUI();
+        gui.addColor(new ColorGUIHelper(light, 'color'), 'value').name('color');
+        gui.add(light, 'intensity', 0, 2, 0.01);
+        makeXYZGUI(gui, light.position, 'position', updateLight);
+        makeXYZGUI(gui, light.target.position, 'target', updateLight); 
+        //////////////////////////////////////////////////////////// 
+        ////////////////////////////////////////////////////////////
+
+        
+        // renderer //////////////////////////////////////////////////
+        var renderer = new THREE.WebGLRenderer();
+        renderer.setSize( window.innerWidth, window.innerHeight );
+        document.body.appendChild( renderer.domElement );
+        renderer.render( scene, camera );
+        
+        // OrbitControls /////////////////////////////////////////////
+        var controls = new OrbitControls( camera, renderer.domElement );
+        
+        // axes ///////////////////////////////////////////////////////
+        const axesHelper = new THREE.AxesHelper( 15 );
+        scene.add( axesHelper );
+                
+        // animation //////////////////////////////////////////////////
+        var animate = function(){
+            requestAnimationFrame(animate);
+            renderer.render( scene, camera );
+        }
+        animate();
+
+        // redimensioar  /////////////////////////////////////////////
+        window.addEventListener('resize', redimensionar);
+        function redimensionar(){
+            camera.aspect = window.innerWidth/window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize( window.innerWidth, window.innerHeight );
+            renderer.render( scene, camera );
+        }
+    </script>    
+
+</body>
+</html>
