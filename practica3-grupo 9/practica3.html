@@ -212,7 +212,65 @@
         // } );
         ////////////////////////////////////////////////////////////
         ////////////////////////////////////////////////////////////
+        class Cube{
+            constructor(sizex,sizey,sizez,posx,posy,posz,textura,rotacionX,rotacionY,rotacionZ){
+                this.sizex = sizex;
+                this.sizey = sizey;
+                this.sizez = sizez;
+                this.posx = posx;
+                this.posy = posy;
+                this.posz = posz;
+                this.textura = textura;
+                this.rotacionX = rotacionX;
+                this.rotacionY = rotacionY;
+                this.rotacionZ =rotacionZ;
+            }
 
+            crearCube(){
+                var  geometry_cube = new THREE.BoxGeometry(this.sizex, this.sizey, this.sizez);
+                const texture_1 = new THREE.TextureLoader().load(this.textura);
+                var material_1 = new THREE.MeshPhongMaterial( {map: texture_1 } );
+                var cube = new THREE.Mesh( geometry_cube, material_1 );
+                cube.rotateX(this.rotacionX);
+                cube.rotateY(this.rotacionY);
+                cube.rotateZ(this.rotacionZ);
+                cube.position.set(this.posx,this.posy,this.posz);
+                return cube;
+            }
+        } 
+        class Triangle{
+            constructor(posX,posY,posZ,width,height,numLados,rotacionX,rotacionY,rotacionZ,textura) {
+                this.posX = posX;
+                this.posY = posY;
+                this.posZ = posZ;
+                this.height = height;
+                this.width = width;
+                this.numLados = numLados;
+                this.rotacionX = rotacionX;
+                this.rotacionY = rotacionY;
+                this.rotacionZ =rotacionZ;
+                this.textura = textura;
+            }
+            crearTriangle(){
+                const geometry = new THREE.PlaneGeometry( this.width, this.height, this.numLados );
+                const texture_1 = new THREE.TextureLoader().load(this.textura);
+                const material = new THREE.MeshBasicMaterial( {map: texture_1 } );
+                const triangle = new THREE.Mesh( geometry, material );
+                triangle.rotateX(this.rotacionX);
+                triangle.rotateY(this.rotacionY);
+                triangle.rotateZ(this.rotacionZ);
+                triangle.position.set(this.posX,this.posY,this.posZ);
+                return triangle;
+            }
+        }
+           
+        const cuerpo1 = new Cube(15,8,6,25,3,-10,'textures/texture_1.jpg',0.0,0.0,0.0);     
+        scene.add(cuerpo1.crearCube()); 
+        const cuerpo2 = new Cube(1,4,4,30,6,-10,'textures/texture_1.jpg',90.0,0.0,0.0);     
+        scene.add(cuerpo2.crearCube()); 
+        //const cuerpo3 = new Cube(2,6,6,25,6,-10,'textures/texture_1.jpg',0.0,0.0,0.0);     
+        //scene.add(cuerpo3.crearCube()); 
+        
         ////////////////////////////////////////////////////////////
         // HemisphereLight light ///////////////////////////////////
         const skyColor = 0xB1E1FF;  // light blue
