@@ -53,7 +53,7 @@
         
         // scene //////////////////////////////////////////////////
         var scene = new THREE.Scene();
-        scene.backgroundColor = new THREE.Color(0xffffff);
+        scene.backgroundColor = new THREE.Color(0x000000);
                
         // mesh //////////////////////////////////////////////////    
         ////////////////////////////////////////////////////////////   
@@ -252,7 +252,7 @@
                 this.textura = textura;
             }
             crearTriangle(){
-                const geometry = new THREE.PlaneGeometry( this.width, this.height, this.numLados );
+                const geometry = new THREE.Cylinder( this.width, this.height, this.numLados );
                 const texture_1 = new THREE.TextureLoader().load(this.textura);
                 const material = new THREE.MeshBasicMaterial( {map: texture_1 } );
                 const triangle = new THREE.Mesh( geometry, material );
@@ -263,7 +263,26 @@
                 return triangle;
             }
         }
-        const texturas = ['textures/texture_1.jpg','textures/textura_techo.jpg','textures/textura_techo2.jpg','textures/Wood_Floor_Parquet_.jpg','textures/Roofing_Shingles_Asphalt_.jpg','textures/suelo.jpg'];
+        //posn=i+5*-2
+        //posx=posn*4
+        //posy=0.25        
+        //posz=15
+        function crearveredaH(n,temp,posy,posz){
+            for(var i=0; i<n;i++) {
+                var posn=(i+temp)*4;
+                const piso = new Cube(4,0.1,4,posn,posy,posz,texturas[5],0.0,0.0,0.0);     
+                scene.add(piso.crearCube());
+            }
+        }
+        function crearveredaV(n,temp,posx,posy){
+            for(var i=0; i<n;i++) {
+                var posn=(i+temp)*4;
+                const piso = new Cube(4,0.1,4,posx,posy,posn,texturas[5],0.0,0.0,0.0);     
+                scene.add(piso.crearCube());
+            }
+        }
+        
+        const texturas = ['textures/texture_1.jpg','textures/textura_techo.jpg','textures/textura_techo2.jpg','textures/Wood_Floor_Parquet_.jpg','textures/Roofing_Shingles_Asphalt_.jpg','textures/suelo.jpg','textures/chacra1.jpg','textures/ladrillo.jpg','textures/texpuerta.jpg','textures/ven.jpg','textures/puer1.jpg','textures/ventanamarco.jpg'];
         //casa1
         const cuerpo1 = new Cube(15,6,6,25,4,-10,texturas[0],0.0,0.0,0.0);     
         scene.add(cuerpo1.crearCube()); 
@@ -290,6 +309,21 @@
         scene.add(palo1.crearCube());
         const palo2 = new Cube(0.3,0.3,5.85,23.3,3.4,1.8,texturas[3],7.85,0.0,0.0);     
         scene.add(palo2.crearCube());
+        ////////////////////////////////////////////////////////////////////////////////////////////
+        ////PUERTITA
+        const puerta = new Cube(2,4,0.5,20.5,3,-1.22,texturas[10],0.0,0,0.0,0.0);
+        scene.add(puerta.crearCube());
+        const marco_puerta = new Cube(2,1.4,0.5,20.5,5.7,-1.22,texturas[8],0.0,0,0.0,0.0);
+        scene.add(marco_puerta.crearCube());
+        const ven1_puerta = new Cube(1.8,1,0.5,20.5,5.7,-1.2,texturas[9],0.0,0,0.0,0.0);
+        scene.add(ven1_puerta.crearCube());
+        ////VENTANAS
+        const ventana1 = new Cube(2,2,0.5,26,4,-7.2,texturas[11],0.0,0,0.0,0.0);
+        scene.add(ventana1.crearCube());
+        const ventana2 = new Cube(2,2,0.5,30,4,-7.2,texturas[11],0.0,0,0.0,0.0);
+        scene.add(ventana2.crearCube());
+        const ventana3 = new Cube(0.5,2,2,32.3,5.9,-10.2,texturas[11],0.0,0,0.0,0.0);
+        scene.add(ventana3.crearCube());
         // piso 
         const piso = new Cube(6,1,9,20.5,0.5,-2.5,texturas[3],0.0,0.0,0.0);     
         scene.add(piso.crearCube());
@@ -298,12 +332,48 @@
         //gradita
         const gradita = new Cube(3,0.5,1,20.8,0.25,2.2,texturas[3],0.0,0.0,0.0);     
         scene.add(gradita.crearCube());
+        //vereda
+        var temp1=5*-2
+        var posyz=[0.05,15]
+        crearveredaH(23,temp1,posyz[0],posyz[1]);
+        var temp2=0.75
+        var posxy=[20.7,0.05]
+        crearveredaV(3,temp2,posxy[0],posxy[1]);
+        var temp3=1.74
+        var posxy=[10.7,0.05]
+        crearveredaV(2,temp3,posxy[0],posxy[1]);
+        var temp4=5*-1.5
+        var posxyd=[-43.5,0.05]
+        crearveredaV(13,temp4,posxyd[0],posxyd[1]);
+        var temp5=5*-0.25
+        var posxyc=[-10,0.05]
+        crearveredaV(5,temp5,posxyc[0],posxyc[1]);
+        //chacra
+        const chacra = new Cube(15,1,15,-30.5,0.5,-40.5,texturas[6],0.0,0.0,0.0);     
+        scene.add(chacra.crearCube());
+        const chacra1 = new Cube(15,1,15,-30.5,0.5,-20.5,texturas[6],0.0,0.0,0.0);     
+        scene.add(chacra1.crearCube());
+        const chacra2 = new Cube(15,1,15,-10.5,0.5,-40.5,texturas[6],0.0,0.0,0.0);     
+        scene.add(chacra2.crearCube());
+        const chacra3 = new Cube(15,1,15,-10.5,0.5,-20.5,texturas[6],0.0,0.0,0.0);     
+        scene.add(chacra3.crearCube());
+        // ALMACEN
+        const geometry = new THREE.CylinderGeometry( 6, 6, 15, 32 );
+        const texture_1 = new THREE.TextureLoader().load(texturas[7]);
+        const material = new THREE.MeshBasicMaterial( {map: texture_1 } );
+        const cylinder = new THREE.Mesh( geometry, material );
+        cylinder.position.set(7,7.5,-15)
+        scene.add( cylinder );
 
-        for(var i=0; i<15;i++) {
-            var posn=i+5*-3;
-            const piso = new Cube(4,0.1,4,posn*4,0.25,15,texturas[5],0.0,0.0,0.0);     
-            scene.add(piso.crearCube());
-        }
+        const cabeza = new THREE.ConeGeometry( 8, 8, 32 );
+        const texture_c = new THREE.TextureLoader().load(texturas[1]);
+        const material_c = new THREE.MeshBasicMaterial( {map: texture_c } );
+        const cabeza_c = new THREE.Mesh( cabeza, material_c );
+        cabeza_c.position.set(7,18,-15);
+        scene.add( cabeza_c );
+        const puertaa = new Cube(2,4,0.5,7,2.5,-20.8,texturas[10],0.0,0,0.0,0.0);
+        scene.add(puertaa.crearCube());
+
         const techog1 = new Cube(18,1,11,3.5,20,4,texturas[1],-65.05,0.0,0.0);     
         scene.add(techog1.crearCube());
         const techog2 = new Cube(18,1,11,3.5,19.5,-2.5,texturas[1],65.05,0.0,0.0);     
