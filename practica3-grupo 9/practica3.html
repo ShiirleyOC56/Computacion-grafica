@@ -263,7 +263,7 @@
                 return triangle;
             }
         }
-        const texturas = ['textures/texture_1.jpg','textures/textura_techo.jpg','textures/textura_techo2.jpg','textures/Wood_Floor_Parquet_.jpg','textures/Roofing_Shingles_Asphalt_.jpg','textures/suelo.jpg'];
+        const texturas = ['textures/texture_1.jpg','textures/textura_techo.jpg','textures/textura_techo2.jpg','textures/Wood_Floor_Parquet_.jpg','textures/Roofing_Shingles_Asphalt_.jpg','textures/suelo.jpg','textures/texpuerta.jpg','textures/ven.jpg','textures/puer1.jpg','textures/ventanamarco.jpg'];
         //casa1
         const cuerpo1 = new Cube(15,6,6,25,4,-10,texturas[0],0.0,0.0,0.0);     
         scene.add(cuerpo1.crearCube()); 
@@ -272,7 +272,7 @@
         const cuerpo3 = new Cube(1,4,4,18,7,-10,texturas[0],95.0,0.0,0.0);     
         scene.add(cuerpo3.crearCube()); 
         const techo1 = new Cube(16,0.5,5.5,25,8,-12,texturas[1],-95.0,0.0,0.0);     
-        scene.add(techo1.crearCube());
+        scene.add(techo1.crearCube());  
         const techo2 = new Cube(16,0.5,5.5,25,8.1,-8.3,texturas[1],95.0,0.0,0.0);     
         scene.add(techo2.crearCube());
          //casa2
@@ -310,7 +310,21 @@
         scene.add(techog2.crearCube());
         const chimenea = new Cube(2,9,3,4,20.3,-2.5,texturas[4],0.0,0.0,0.0);     
         scene.add(chimenea.crearCube()); 
-        
+        ////////////////////////////////////////////////////////////////////////////////////////////
+        ////PUERTITA
+        const puerta = new Cube(2,4,0.5,20.5,3,-1.22,texturas[8],0.0,0,0.0,0.0);
+        scene.add(puerta.crearCube());
+        const marco_puerta = new Cube(2,1.4,0.5,20.5,5.7,-1.22,texturas[6],0.0,0,0.0,0.0);
+        scene.add(marco_puerta.crearCube());
+        const ven1_puerta = new Cube(1.8,1,0.5,20.5,5.7,-1.2,texturas[7],0.0,0,0.0,0.0);
+        scene.add(ven1_puerta.crearCube());
+        ////VENTANAS
+        const ventana1 = new Cube(2,2,0.5,26,4,-7.2,texturas[9],0.0,0,0.0,0.0);
+        scene.add(ventana1.crearCube());
+        const ventana2 = new Cube(2,2,0.5,30,4,-7.2,texturas[9],0.0,0,0.0,0.0);
+        scene.add(ventana2.crearCube());
+        const ventana3 = new Cube(0.5,2,2,32.3,5.9,-10.2,texturas[9],0.0,0,0.0,0.0);
+        scene.add(ventana3.crearCube());
         ////////////////////////////////////////////////////////////
         // HemisphereLight light ///////////////////////////////////
         const skyColor = 0xB1E1FF;  // light blue
