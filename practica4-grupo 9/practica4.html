@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r79/three.min.js"></script> -->
+    <!-- <script src="https://threejs.org/examples/js/loaders/FBXLoader.js"></script> -->
+    <!--<script src="three.min.js"> </script> 
+    <script src="OrbitControls.js"> </script> 
+    <script src="dat.gui.min.js"></script>
+    -->
+    <!-- <script src="three.min.js"> </script> -->
+    <script type='module'>     
+        import * as THREE from './jsm/three.module.js';
+        // import * as FB from './jsm/three.fbx.js';
+        import { GUI } from './jsm/dat.gui.module.js';
+        import {OrbitControls} from './jsm/OrbitControls.js';
+        import {OBJLoader} from './jsm/OBJLoader.js';
+        import {STLLoader} from './jsm/STLLoader.js';
+        import {MTLLoader} from './jsm/MTLLoader.js';
+        import {FBXLoader} from './jsm/fbxLoader.js';
+
+        // utilizado cuando queremos poner la lampara dentro de la scene como un mesh
+        // function makeXYZGUI(gui, vector3, name, onChangeFn) {
+        //     const folder = gui.addFolder(name);
+        //     folder.add(vector3, 'x', -20, 20).onChange(onChangeFn);
+        //     folder.add(vector3, 'y', 0, 20).onChange(onChangeFn);
+        //     folder.add(vector3, 'z', -20, 20).onChange(onChangeFn);
+        //     folder.open();
+        // }      
+
+        // utilizado por GUI para modificar los parametros de light en la scena
+        // class ColorGUIHelper {
+        //     constructor(object, prop) {
+        //         this.object = object;
+        //         this.prop = prop;
+        //     }
+        //     get value() {
+        //         return `#${this.object[this.prop].getHexString()}`;
+        //     }
+        //     set value(hexString) {
+        //         this.object[this.prop].set(hexString);
+        //     }
+        // }
+
+        // camera //////////////////////////////////////////////////
+        var aspect = window.innerWidth/window.innerHeight;
+        var camera = new THREE.PerspectiveCamera(75, aspect);
+        camera.position.set(0, 10, 20);
+        
+        // scene //////////////////////////////////////////////////
+        var scene = new THREE.Scene();
+
+        // var texture_galaxy= new THREE.TextureLoader().load('textures/galaxy.png');
+        scene.background = new THREE.TextureLoader().load('textures/galaxy.png');
+        
+               
+        
+       
+
+        // objloader////////////////////////////////////////////////    
+        //////////////////////////////////////////////////////////// 
+        // const geometry = new THREE.SphereGeometry( 1, 64, 64 );
+        // const material = new THREE.MeshBasicMaterial( {color: 0xffff00} );
+        // const sphere = new THREE.Mesh( geometry, material );
+        // sphere.position.set(0, 0,0);
+        // scene.add(sphere);
+
+
+
+        // const geometry1 = new THREE.SphereGeometry( 1, 64, 64 );
+        // const material1 = new THREE.MeshBasicMaterial( {color: 0xffff00} );
+        // const sphere1 = new THREE.Mesh( geometry1, material1 );
+        // sphere1.position.set(20, 20,10);
+        // scene.add(sphere1);
+        
+
+        ////////////////////////////////////////////////////////////
+        ////////////////////////////////////////////////////////////
+        class Planeta{
+            constructor(nombrePlaneta,radio,orbita,velocidad,texturas){
+                this.nombrePlaneta=nombrePlaneta;
+                this.radio=radio;
+                this.orbita=orbita;
+                this.velocidad=velocidad;
+                this.texturas=texturas;
+            }
+            crearPlaneta(){
+                var geometry_sphere= new  THREE.SphereGeometry(this.radio, 32, 16);
+                var textura_planeta= new THREE.TextureLoader().load(this.texturas)
+                var mat = new THREE.MeshBasicMaterial({map: textura_planeta});//wireframe: true
+                var planeta=new THREE.Mesh(geometry_sphere, mat);
+                // planeta.position.set(10,10,0);
+                planeta.userData.orbit=this.orbita;
+                planeta.userData.speed=this.velocidad;
+                return planeta;
+            }
+            moveinOrbit(){
+                // const shape = new THREE.Shape();
+                // shape.moveTo(this.orbita, 0);
+                // shape.absarc(0, 0, this.orbita, 0, 2 * Math.PI, false);
+                // console.log(shape);
+                // var spacedPoints =new THREE.ShapeGeometry(shape,128);
+                const curva=new THREE.EllipseCurve( 0,0 , this.orbita,this.orbita,0,2 * Math.PI,false,0);
+                const points=curva.getPoints(128);
+                var spacedPoints=  new THREE.BufferGeometry().setFromPoints( points );
+                // var spacedPoints = new THREE.BufferGeometry().setFromPoints(shape,128);
+                spacedPoints.rotateX(THREE.Math.degToRad(-90));
+                var orbit = new THREE.Line(spacedPoints, new THREE.LineBasicMaterial({
+                color: 0xd2cbc4
+                }));
+                return orbit;
+            }
+        }
+       
+        //posn=i+5*-2
+        //posx=posn*4
+        //posy=0.25        
+        //posz=15
+       
+        var planets=[];
+        var timestamp=0;
+        var scaleVector = new THREE.Vector3();
+        var texturas_array=['textures/mercurioMap.jpg','textures/venus.jpg','textures/tierra.jpg','textures/marte.jpg','textures/jupiter.jpg','textures/saturno.jpg','textures/urano.jpg','textures/neptuno.jpg','textures/sol.png'];
+        //PLANETA Mercurio
+        const p1= new Planeta("Mercurio",3,25,4.5,texturas_array[0]);
+        const pp1 = p1.crearPlaneta();
+        scene.add(pp1);
+        scene.add(p1.moveinOrbit());
+        planets.push(pp1);
+        
+        //PLANETA Venus
+        const p2= new Planeta("Venus",3.5,35,4.3,texturas_array[1]);
+        const pp2 = p2.crearPlaneta();
+        scene.add(pp2);
+        scene.add(p2.moveinOrbit());
+        planets.push(pp2);
+        //PLANETA Tierra 
+        const p3= new Planeta("Tierra",4,45,3.7,texturas_array[2]);
+        const pp3= p3.crearPlaneta();
+        scene.add(pp3);
+        scene.add(p3.moveinOrbit());
+        planets.push(pp3);
+        //PLANETA Marte
+        const p4= new Planeta("Marte",3.6,55,2,texturas_array[3]);
+        const pp4=p4.crearPlaneta(); 
+        scene.add(pp4);
+        scene.add(p4.moveinOrbit());
+        planets.push(pp4);
+        //PLANETA Jupiter
+        const p5= new Planeta("Jupiter",5,65,0.9,texturas_array[4]);
+        const pp5=p5.crearPlaneta(); 
+        scene.add(pp5);
+        scene.add(p5.moveinOrbit());
+        planets.push(pp5);
+        //PLANETA Saturno
+        const p6= new Planeta("Saturno",5.5,75,0.7,texturas_array[5]);
+        const pp6=p6.crearPlaneta(); 
+        scene.add(pp6);
+        scene.add(p6.moveinOrbit());
+        planets.push(pp6);
+        //PLANETA Urano
+        const p7= new Planeta("Urano",4.4,85,0.5,texturas_array[6]);
+        const pp7=p7.crearPlaneta(); 
+        scene.add(pp7);
+        scene.add(p7.moveinOrbit());
+        planets.push(pp7);
+        //PLANETA Neptuno
+        const p8= new Planeta("Neptuno",4.8,95,0.3,texturas_array[7]);
+        const pp8=p8.crearPlaneta(); 
+        scene.add(pp8);
+        scene.add(p8.moveinOrbit());
+        planets.push(pp8);
+        // console.log(planets[0]);
+        // console.log(planets[1]);
+        // console.log(planets[2]);
+        // console.log(planets[3]);
+        //Sol
+        var materialSun= new THREE.TextureLoader().load(texturas_array[8]);
+        var sun = new THREE.Mesh(new THREE.SphereGeometry(10, 32, 16), new THREE.MeshBasicMaterial({map: materialSun}));
+        scene.add(sun);
+
+       
+        
+        ////////////////////////////////////////////////////////////
+        // HemisphereLight light ///////////////////////////////////
+        const skyColor = 0xB1E1FF;  // light blue
+        const groundColor = 0x59340B;  // black
+        const hemisphere_light = new THREE.HemisphereLight(skyColor, groundColor, 0.5);
+        scene.add(hemisphere_light);        
+        ////////////////////////////////////////////////////////////
+        ////////////////////////////////////////////////////////////
+
+        ////////////////////////////////////////////////////////////
+        // DirectionalLight  ///////////////////////////////////////
+        const color = 0xFFFFFF;
+        const intensity = 0.5;
+        const light = new THREE.DirectionalLight(color, intensity);
+        light.position.set(5, 10, 10);
+        light.target.position.set(0, 0, 0);
+        scene.add(light);
+        scene.add(light.target);
+
+        const helper = new THREE.DirectionalLightHelper(light);
+        scene.add(helper);
+
+        function updateLight() {
+            light.target.updateMatrixWorld();
+            helper.update();
+        }
+        updateLight();        
+        // gui
+        // const gui = new GUI();
+        // gui.addColor(new ColorGUIHelper(light, 'color'), 'value').name('color');
+        // gui.add(light, 'intensity', 0, 2, 0.01);
+        // makeXYZGUI(gui, light.position, 'position', updateLight);
+        // makeXYZGUI(gui, light.target.position, 'target', updateLight); 
+        //////////////////////////////////////////////////////////// 
+        ////////////////////////////////////////////////////////////
+
+        
+        // renderer //////////////////////////////////////////////////
+        var renderer = new THREE.WebGLRenderer();
+        renderer.setSize( window.innerWidth, window.innerHeight );
+        document.body.appendChild( renderer.domElement );
+        renderer.render( scene, camera );
+        
+        // OrbitControls /////////////////////////////////////////////
+        var controls = new OrbitControls( camera, renderer.domElement );
+        
+        // axes ///////////////////////////////////////////////////////
+        const axesHelper = new THREE.AxesHelper( 15 );
+        scene.add( axesHelper );
+                
+        // animation //////////////////////////////////////////////////
+        var animate = function(){
+            timestamp = Date.now() * 0.0001;
+            requestAnimationFrame(animate);
+            planets.forEach(function(planeta){
+                var scaleFactor = 8;
+                var scale = scaleVector.subVectors(planeta.position, camera.position).length() / scaleFactor;
+                var orbit = planeta.userData.orbit;
+                var speed = planeta.userData.speed;
+                planeta.position.x = Math.cos(timestamp * speed) * orbit;
+                planeta.position.z = Math.sin(timestamp * speed) * orbit;});
+            renderer.render( scene, camera );
+        }
+        animate();
+
+        // redimensioar  /////////////////////////////////////////////
+        window.addEventListener('resize', redimensionar);
+        function redimensionar(){
+            camera.aspect = window.innerWidth/window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize( window.innerWidth, window.innerHeight );
+            renderer.render( scene, camera );
+        }
+    </script>    
+
+</body>
+</html>
