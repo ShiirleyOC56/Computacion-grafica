@@ -1,0 +1,53 @@
+{% load static %}
+{% load socialaccount %}
+{% providers_media_js %}
+<!DOCTYPE html>
+<head>
+<meta charset="UTF-8">
+ <link rel="stylesheet" href="{% static 'css/estilos.css' %}">
+<meta charset="utf-8">
+</head>
+<body>
+
+<center>
+
+<br><br>
+<section>
+<div id="imagen">
+	<img src="{% static 'img/sesion.png' %}" height="500px" width="500px">
+</div>
+</div>
+
+<br>
+
+<script src="https://apis.google.com/js/platform.js" async defer></script>
+<meta name="google-signin-scope" content="profile email">
+<meta name="google-signin-client_id" content="582382088809-ier6oq9ok635b4opf16e69nm6cfksm8j.apps.googleusercontent.com">
+<div class="g-signin2" data-onsuccess="onSignIn"></div>
+<script>
+	function onSignIn(googleUser) {
+	  // Useful data for your client-side scripts:
+	  var profile = googleUser.getBasicProfile();
+	  console.log("ID: " + profile.getId()); // Don't send this directly to your server!
+	  console.log('Full Name: ' + profile.getName());
+	  console.log('Given Name: ' + profile.getGivenName());
+	  console.log('Family Name: ' + profile.getFamilyName());
+	  console.log("Image URL: " + profile.getImageUrl());
+	  console.log("Email: " + profile.getEmail());
+
+	  // The ID token you need to pass to your backend:
+	  var id_token = googleUser.getAuthResponse().id_token;
+	  console.log("ID Token: " + id_token);
+	  if (id_token != null){
+		window.location.replace("https://cloud-scanner.herokuapp.com/mod_scanner");
+	  }	  
+	}
+
+</script>
+
+
+<br>
+<!-- boton 2-->
+
+</body>
+</html>

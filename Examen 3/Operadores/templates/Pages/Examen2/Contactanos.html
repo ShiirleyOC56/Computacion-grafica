@@ -1,0 +1,55 @@
+{% extends "../../base.html" %}
+
+{% block centro %}
+<br><br><br><br><br>
+<div class="container b-2">
+    <h4> Por Correo </h4>
+    <form method="POST" id="mensaje">
+        {% csrf_token %}
+        <div class="form-group">
+            <label for="message_comment"> <strong>Mensaje:</strong>  </label>
+            <textarea name="message_comment" id="message_comment" class="form-control" rows="5" placeholder="Ingrese el mensaje"></textarea>
+        </div>
+        <button type="submit" class="btn btn-primary text-white btn-banner" >Enviar</button>
+
+    </form>
+
+    <h4> Tambien puede hacerlo por Telegram </h4>
+    <a href="http://t.me/ScannerOnline_bot"><i class="fa fa-telegram"></i>Telegram</a>
+
+</div>
+
+
+{% endblock centro %}
+
+
+
+{% block codes_js %}
+
+<script>
+$("#mensaje").submit(function (e) {
+     e.preventDefault();
+    var serializedData = new FormData(this);
+     $.ajax({
+        type: 'POST',
+        url: 'send_message/',
+        data: serializedData,
+        processData: false,
+        contentType: false,
+        success: function (response)
+        {
+            if(response.State == "OK")
+            {
+                alert("Mensaje Enviado");
+                $("#mensaje")[0].reset();
+            }
+        },
+        error: function (response) {
+              // $(Check).attr("type","readonly");
+              console.log(response);
+               }
+        })
+})
+</script>
+
+{% endblock codes_js %}

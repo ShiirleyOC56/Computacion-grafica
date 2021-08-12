@@ -1,0 +1,181 @@
+{% extends "../base.html" %}
+{% load static %}
+
+{% block centro %}
+
+<div class="cuerpo">
+    <div class="container">
+        <div class="cuerpo-text">
+            <br><br><br><br><br><br>
+
+            <div class="container text-center h-100 d-flex justify-content-center align-items-center">
+                <div class="container">
+                    <form method="POST" id="Change_Image" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        <h2 class="cuerpo-heading" > Imagen_Original </h2>
+                        <img src="{{ imagen }}"  id = "ori_img" class="img-thumbnail">
+                        <br>
+                        <input type="hidden" id="camino" name="camino" value="{{camino}}" >
+                        <input type="hidden" id="nombre" name="nombre" value="{{nombre}}" >
+                        <br>
+                        <div class="col-xs-3">
+                        <select name="algoritmo" id="algoritmo" class="form-control">
+                            <option value="''"> Selecione un Operador </option>
+                            <option value=1>Thresholding</option>
+                            <option value=2>Contrast stretching</option>
+                            <option value=3>Ecualización de histograma</option>
+                            <option value=4>Operador logaritmico</option>
+                            <option value=5>Operador raiz</option>
+                            <option value=6>Operador exponencial</option>
+                            <option value=7>Operador raise to power</option>
+                            <option value=8>Sumar</option>
+                            <option value=9>Restar</option>
+                            <option value=10>Multiplicar</option>
+                            <option value=11>Dividir</option>
+                            <option value=12>Blending</option>
+                            <option value=13>AND</option>
+                            <option value=14>OR</option>
+                            <option value=15>XOR</option>
+                        </select>
+                        <br>
+                        <div id = "aritmetica">
+                            <select name="op_aritmeticas" id="op_aritmeticas" class="form-control">
+                                <option value=1>Con constante</option>
+                                <option value=2>Con imagenes</option>
+                            </select>
+                        </div>
+
+                        <br>
+                        <div id ='bot'>
+                            <div class="form-group" id="const1">
+                                <label for="constante">Constante1: </label>
+                                <input type="number" step="0.01" id="constante" name="constante">
+                            </div>
+                            <div class="form-group" id="const2">
+                                 <label for="constante1">Constante2: </label>
+                                <input type="number" step="0.01" id="constante1" name="constante1">
+                            </div>
+                            <div class="form-group" id="const3">
+                                <label for="constante2">Constante3: </label>
+                                <input type="number" step="0.01" id="constante2" name="constante2">
+                            </div>
+                            <div class="form-group" id="const4">
+                                 <label for="constante3">Constante4: </label>
+                                <input type="number" step="0.01" id="constante3" name="constante3">
+                            </div>
+                            <div class="form-group" id="const5">
+                                <label for="file">Otra Imagen: </label>
+                                <input type="file" id="file" name="image">
+                                <img id="image">
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-warning text-dark btn-banner"> Utilizar</button>
+                    </div>
+                </form>
+                </div>
+                <br>
+                <div id="resul" class="container">
+                    <h2 id="enun" class="cuerpo-heading"> Imagen_Modificada con Operador Exponencial </h2>
+                    <img src="" id="img_exp" name="img_exp" class="img-thumbnail">
+                    <input type="hidden" value="No hay Data, fallo" id="Check" name="Check">
+                    <br>
+                    <button onclick="usa_este()" class="btn btn-warning text-dark btn-banner">Seleccionar esta imagen</button>
+                    <button onclick="downlod()" class="btn btn-primary text-dark btn-banner">Descargar</button>
+                    
+                    <!-- Facebook logout-->
+                </div>
+
+            </div>
+            <br><br>
+    <!--
+    <div class="container center">
+        <form action="{% url 'Ops:index' %}">
+            <button class="btn btn-primary">Regresar</button>
+        </form>
+
+    </div>
+    -->
+        </div>
+    </div>
+</div>
+{% endblock centro %}
+
+
+{% block codes_js %}
+<script src="{% static 'js/funciones.js' %}"></script>
+<script src="{% static 'js/tokens.js' %}"></script>
+<script src="{% static 'js/check_aritmetica.js' %}"></script>
+<script>
+
+    const $form = document.querySelector('#Change_Image');
+
+    const $image = document.querySelector('#image');
+    const $file = document.querySelector('#file');
+    function renderImage(formData) {
+      const file = formData.get('image');
+      const image = URL.createObjectURL(file);
+      $image.setAttribute('src', image);
+    }
+
+    $file.addEventListener('change', (event) => {
+      const formData = new FormData($form);
+      renderImage(formData);
+    })
+
+</script>
+<script>
+
+    function usa_este(){
+     var direccion = new String(document.getElementById('img_exp').src);
+     console.log(direccion);
+     document.getElementById('ori_img').src=direccion;
+     document.getElementById('nombre').value = nnombre;
+     document.getElementById('camino').value = ncamino;
+     console.log($(nombre).val());
+     console.log($(camino).val());
+    }
+</script>
+
+
+
+
+<script>
+        var nnombre;
+        var ncamino;
+
+        $("#Change_Image").submit(function (e) {
+            console.log($(nombre).val());
+            console.log($(camino).val());
+            e.preventDefault();
+            var serializedData = new FormData(this); // $(this).serializeObject();
+            var variable1 = $(nombre).val();
+            var variable2= $(algoritmo).val();
+            var url_to_send = get_url_to_send(variable1,variable2);
+            $.ajax({
+                type: 'POST',
+                url: url_to_send,
+                data: serializedData,
+                processData: false,
+                contentType: false,
+                success: function (response) {
+                    if(response.Estado == "OK"){
+                        document.getElementById('img_exp').src=response.imagen;
+                        nnombre = response.nombre;
+                        ncamino = response.camino;
+                    }
+                },
+                error: function (response) {
+                    // alert the error if any error occured
+                   $(Check).attr("type","readonly");
+                   console.log(response);
+                }
+            })
+        })
+</script>
+<script>
+    var upload = new FileUploadWithPreview('myUniqueUploadId')
+</script>
+<!-- Facebook logout-->
+
+</script>
+{% endblock codes_js %}

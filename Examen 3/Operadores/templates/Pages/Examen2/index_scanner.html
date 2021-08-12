@@ -1,0 +1,26 @@
+{% extends "../Examen2/Pedidodeimagen.html" %}
+
+{% load static %}
+
+{% block centro %}
+<div class="container text-center d-flex justify-content-center align-items-center">
+    <img id="image_sp" alt="">
+</div>
+<br>
+<div class="container text-center d-flex justify-content-center align-items-center">
+                <form method = "post" enctype="multipart/form-data"  id="formData">
+                        {% csrf_token %}
+                        <input type="file" id="Original" name="Original" class="btn btn-warning text-dark btn-banner" >
+                        <br>
+                        <br>
+                        <button type="submit" class="btn btn-warning text-dark btn-banner" >Cargar</button>
+                </form>
+</div>
+
+{% endblock centro %}
+
+
+{% block codes_js %}
+    <script src="{% static 'js/preview_image.js' %}"></script>
+{% endblock codes_js %}
+

@@ -1,0 +1,177 @@
+{% extends "../Examen2/Pedidodeimagen.html" %}
+
+{% load static %}
+{% block centro %}
+<br><br>
+<div class="row">
+    <div class="col-md-6">
+        <div>
+            <canvas id="my_canvas" width="0" height="0"> </canvas>
+        </div>
+        <br>
+        <div class="row">
+            <div class="col-md-6">
+                <form method="POST" id="Change_Image">
+                    {% csrf_token %}
+                    <div class="container text-center d-flex justify-content-center align-items-center">
+                            <div class="d-none">
+                                <img src="{{ imagen }}"  id = "ori_img">
+                                <input type="hidden" id="camino" name="camino" value="{{camino}}" >
+                                <input type="hidden" id="nombre" name="nombre" value="{{nombre}}" >
+                            </div>
+                    </div>
+                    <button type="submit" id="button_1" class="btn btn-warning text-dark btn-lg btn-banner"> Empezar </button>
+
+                </form>
+            </div>
+            <div class="col-md-6">
+                <form method="POST" id="Modo_scan">
+                    {% csrf_token %}
+                    <div class="container text-center d-flex justify-content-center align-items-center">
+                            <div class="d-none">
+                                <input type="hidden" id="path" name="path" value="{{camino}}" >
+                                <input type="hidden" id="name" name="name" value="{{nombre}}" >
+                            </div>
+                    </div>
+                    <button id="button_2" type="submit" class="btn btn-primary btn-lg text-white btn-banner" disabled> Scan </button>
+
+                </form>
+            </div>
+
+        </div>
+        <a class="btn btn-primary btn-lg btn-block" href="{% url 'Ops:scanner_index' %}">Cambiar de imagen</a>
+    </div>
+
+    <div class="col-md-6">
+        <div class="alert alert-danger text-center" role="alert">
+          <p class="font-weight-bold text-danger">Imagen Scaneada</p>
+        </div>
+        <div class="alert alert-dark text-center">
+            <img id="img_result">
+        </div>
+        <br><br><br>
+
+        <div class="row">
+            <div class="col-md-4">
+                    <input type="hidden" id="img_color" name="img_color" value="">
+                    <button id= "color_button" type="submit" class="btn btn-primary text-white btn-banner" disabled> Imagen a color </button>
+            </div>
+            <div class="col-md-4">
+                    <input type="hidden" id="img_grises" name="img_grises" value="">
+                    <button id= "gris_button" type="submit" class="btn btn-secondary text-white btn-banner" disabled> Escala de grises </button>
+            </div>
+            <div class="col-md-4">
+                    <input type="hidden" id="img_blanco_negro" name="img_blanco_negro" value="">
+                    <button id= "negro_button" type="submit" class="btn btn-dark text-white btn-banner" disabled> Blanco y Negro </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+{% endblock centro %}
+
+{% block codes_js %}
+<script src="{% static 'js/scam_canvas.js' %}"></script>
+<script src="{% static 'js/Canvas_eventos.js' %}"></script>
+
+<script>
+    $(color_button).click(function() {
+      $(img_result).attr('src', $(img_color).val())
+      $(color_button).prop('disabled', true);
+      $(gris_button).prop('disabled', false);
+      $(negro_button).prop('disabled', false);
+    });
+
+    $(gris_button).click(function() {
+      $(img_result).attr('src', $(img_grises).val())
+      $(color_button).prop('disabled', false);
+      $(gris_button).prop('disabled', true);
+      $(negro_button).prop('disabled', false);
+    });
+
+    $(negro_button).click(function() {
+      $(img_result).attr('src', $(img_blanco_negro).val())
+      $(color_button).prop('disabled', false);
+      $(gris_button).prop('disabled', false);
+      $(negro_button).prop('disabled', true);
+    });
+</script>
+
+
+<script>
+var corners_image = [];
+
+$("#Change_Image").submit(function (e) {
+     e.preventDefault();
+    var serializedData = new FormData(this);
+    var variable1 = $(nombre).val();
+
+    var url_to_send = get_url_to_corners(variable1);
+     $.ajax({
+        type: 'POST',
+        url: url_to_send,
+        data: serializedData,
+        processData: false,
+        contentType: false,
+        success: function (response)
+        {
+            if(response.Estado == "OK")
+            {
+
+                corners_image.push(response.esquinas1);
+                corners_image.push(response.esquinas3);
+                corners_image.push(response.esquinas4);
+                corners_image.push(response.esquinas2);
+                dibujar_desde_lista(corners_image);
+                lineas_desde_lista(corners_image);
+                $(button_1).prop('disabled', true);
+                $(button_2).prop('disabled', false);
+            }
+        },
+        error: function (response) {
+              // $(Check).attr("type","readonly");
+              console.log(response);
+               }
+        })
+})
+</script>
+
+<script>
+$("#Modo_scan").submit(function (e) {
+     e.preventDefault();
+    var serializedData = new FormData(this);
+    serializedData.append('esquinas', corners_image);
+    var variable1 = $(nombre).val();
+    $(img_result).attr('src', "")
+    var url_to_send = get_url_to_scannear(variable1);
+     $.ajax({
+        type: 'POST',
+        url: url_to_send,
+        data: serializedData,
+        processData: false,
+        contentType: false,
+        success: function (response)
+        {
+            if(response.Estado == "OK")
+            {
+                console.log(response);
+                $(img_result).attr('src', response.imagen_color)
+                $(img_color).val(response.imagen_color);
+                $(img_grises).val(response.imagen_gris);
+                $(img_blanco_negro).val(response.imagen_negro);
+                $(color_button).prop('disabled', true);
+                $(gris_button).prop('disabled', false);
+                $(negro_button).prop('disabled', false);
+                console.log(corners_image);
+            }
+        },
+        error: function (response) {
+              // $(Check).attr("type","readonly");
+              console.log("Fallo");
+              console.log(response);
+               }
+        })
+})
+</script>
+{% endblock codes_js %}
